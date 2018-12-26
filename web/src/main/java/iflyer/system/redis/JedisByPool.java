@@ -66,8 +66,20 @@ public class JedisByPool {
      */
     public JedisByHash HASH;
 
+    /**
+     * 初始化Redis连接池
+     */
     static {
-        initPool();
+        try {
+            JedisPoolConfig config = new JedisPoolConfig();
+            config.setMaxTotal(MAX_ACTIVE);
+            config.setMaxIdle(MAX_IDLE);
+            config.setMaxWaitMillis(MAX_WAIT);
+            config.setTestOnBorrow(TEST_ON_BORROW);
+            jedisPool = new JedisPool(config, ADDRESS, PORT, TIMEOUT/*, AUTH*/);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void initPool() {
@@ -103,22 +115,6 @@ public class JedisByPool {
             }
         } catch (Exception e) {
             logger.error("return redis resource exception", e);
-        }
-    }
-
-    /**
-     * 初始化Redis连接池
-     */
-    static {
-        try {
-            JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxTotal(MAX_ACTIVE);
-            config.setMaxIdle(MAX_IDLE);
-            config.setMaxWaitMillis(MAX_WAIT);
-            config.setTestOnBorrow(TEST_ON_BORROW);
-            jedisPool = new JedisPool(config, ADDRESS, PORT, TIMEOUT/*, AUTH*/);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
